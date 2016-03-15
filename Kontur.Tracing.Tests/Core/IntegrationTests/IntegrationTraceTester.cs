@@ -12,14 +12,15 @@ namespace Kontur.Tracing.Core.IntegrationTests
 {
     public class IntegrationTraceTester
     {
-        private const string testSystemHost = "vm-elastic";
+        private const string testDiTraceHost = "localhost";
+        private const string testElasticHost = "localhost";
         private const string aggregationServiceSystem = "tracing-tests";
         private readonly TimeSpan waitingTime = TimeSpan.FromSeconds(40);
         private readonly TimeSpan queryInterval = TimeSpan.FromSeconds(2);
 
         public void Run(Action traceAction, TraceContextDescriptor[] expectedInfos)
         {
-            var configProvider = new StaticConfigurationProvider(new Config.TracingConfig(true, aggregationServiceSystem, string.Format("http://{0}:9003/spans", testSystemHost))
+            var configProvider = new StaticConfigurationProvider(new Config.TracingConfig(true, aggregationServiceSystem, string.Format("http://{0}:8080/spans", testDiTraceHost))
             {
                 SamplingChance = 1D,
             });
@@ -66,7 +67,7 @@ namespace Kontur.Tracing.Core.IntegrationTests
 
         private bool TryGetInfos(DateTime startTime, out List<TraceContextInfo> infos)
         {
-            var settings = new ConnectionSettings(new Uri(string.Format("http://{0}:9200/", testSystemHost)), string.Format("traces-{0}", DateTime.UtcNow.ToString("yyyy.MM.dd")));
+            var settings = new ConnectionSettings(new Uri(string.Format("http://{0}:9200/", testElasticHost)), string.Format("traces-{0}", DateTime.UtcNow.ToString("yyyy.MM.dd")));
             var client = new ElasticClient(settings);
 
             infos = new List<TraceContextInfo>();
