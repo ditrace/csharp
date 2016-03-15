@@ -1,0 +1,14 @@
+{
+    "version": "0.1",
+    "authors": [
+        "SKB Kontur"
+    ],
+    "description": "DiTrace csharp client library",
+    "dependencies": {
+        "Kontur.Tracing.Core": "",
+        "log4net": "2.0.5"
+    },
+    "frameworks": {
+        "dnx451": {}
+    }
+}

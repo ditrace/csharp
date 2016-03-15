@@ -1,0 +1,25 @@
+{
+    "version": "0.1",
+    "authors": [
+        "SKB Kontur"
+    ],
+    "description": "DiTrace csharp client library tests",
+    "dependencies": {
+        "Kontur.Tracing": "",
+        "Kontur.Tracing.Core": "",
+        "log4net": "2.0.5",
+        "Elasticsearch.Net": "1.7.0",
+        "Newtonsoft.Json": "8.0.3",
+        "FluentAssertions": "4.2.2",
+        "NSubstitute": "1.9.2",
+        "NUnit": "3.2.0",
+        "NEST": "1.7.0",
+        "NUnitLite": "3.2.0"
+    },
+    "commands": {
+        "test": "Kontur.Tracing.Tests"
+    },
+    "frameworks": {
+        "dnx451": {}
+    }
+}

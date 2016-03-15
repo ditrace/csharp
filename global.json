@@ -1,0 +1,5 @@
+{
+     "projects": [
+         "Kontur.Tracing", "Kontur.Tracing.Core", "Kontur.Tracing.Tests"
+     ]
+ }

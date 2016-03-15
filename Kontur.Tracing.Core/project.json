@@ -1,0 +1,11 @@
+{
+    "version": "0.1",
+    "authors": [
+        "SKB Kontur"
+    ],
+    "description": "DiTrace csharp client library core",
+    "dependencies": {},
+    "frameworks": {
+        "dnx451": {}
+    }
+}
