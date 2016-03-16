@@ -1,9 +1,7 @@
-# Distributed tracing system
+# DiTrace c# client
 
 [![Gitter](https://badges.gitter.im/ditrace/ditrace.svg)](https://gitter.im/ditrace/ditrace?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/ditrace/csharp.svg?branch=master)](https://travis-ci.org/ditrace/csharp)
-
-This is the source code of the DiTrace (distributed tracing system) c# client impementation.
 
 Documentation for the entire DiTrace project is available on [Read the Docs][readthedocs] site.
 
