@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Specialized;
-using log4net;
+using Kontur.Tracing.Core.Logging;
 
 namespace Kontur.Tracing
 {

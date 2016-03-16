@@ -37,6 +37,7 @@
 // LibLog providers internally to provide built in support for popular logging frameworks.
 
 #pragma warning disable 1591
+#define LIBLOG_PUBLIC
 
 #if LIBLOG_PROVIDERS_ONLY
 namespace Kontur.Tracing.Core.LibLog

@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Specialized;
 using NUnit.Framework;
-using log4net;
+using Kontur.Tracing.Core.Logging;
 
 namespace Kontur.Tracing
 {
     [TestFixture]
     internal class TraceDataExtractor_Tests
     {
-        ILog logger = LogManager.GetLogger(typeof(TraceDataExtractor_Tests).Name);
+        ILog logger = LogProvider.GetLogger(typeof(TraceDataExtractor_Tests));
         
         [SetUp]
         public void TestSetup()

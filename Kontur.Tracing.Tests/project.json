@@ -7,7 +7,6 @@
     "dependencies": {
         "Kontur.Tracing": "",
         "Kontur.Tracing.Core": "",
-        "log4net": "2.0.5",
         "Elasticsearch.Net": "1.7.0",
         "Newtonsoft.Json": "8.0.3",
         "FluentAssertions": "4.2.2",
