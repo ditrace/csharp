@@ -6,4 +6,4 @@ install:
   - dnvm upgrade
   - dnu restore
 script:
-  - dnx ./Kontur.Tracing.Tests/project.json test --where="cat != Functional"
+  - dnx -p ./Kontur.Tracing.Tests test --where="cat != Functional"
