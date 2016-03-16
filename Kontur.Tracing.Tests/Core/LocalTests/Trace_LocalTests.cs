@@ -3,6 +3,7 @@ using Kontur.Tracing.Core.FunctionalTests;
 using Kontur.Tracing.Core.TraceCases;
 using Kontur.Tracing.Core.TraceCases.Edi;
 using NUnit.Framework;
+using NUnitLite;
 
 namespace Kontur.Tracing.Core.LocalTests
 {
@@ -84,7 +85,7 @@ namespace Kontur.Tracing.Core.LocalTests
         }
 
         [Test]
-        [Timeout(5000)]
+        [MaxTime(5000)]
         public void Test_AsyncTaskOnServer()
         {
             traceTester.Run(EdiTraceCases.AsyncTaskOnServer, new[]

@@ -4,7 +4,7 @@ using Kontur.Tracing.Core.Logging;
 
 namespace Kontur.Tracing.Core.Impl
 {
-    internal class RealTraceContext : MarshalByRefObject, ITraceContext
+    internal class RealTraceContext : ITraceContext
     {
         public RealTraceContext([NotNull] string traceId, [NotNull] string contextId, [CanBeNull] string contextName, [CanBeNull] string parentContextId, [NotNull] ITracingEnvironment tracingEnvironment, bool isRoot)
         {
@@ -106,6 +106,6 @@ namespace Kontur.Tracing.Core.Impl
         private readonly ITracingEnvironment tracingEnvironment;
         private readonly TraceContextInfo traceContextInfo;
         private readonly RealTraceContext previousRealTraceContext;
-        private static readonly ILog log = LogProvider.GetCurrentClassLogger();
+        private static readonly ILog log = LogProvider.GetLogger(typeof(RealTraceContext));
     }
 }

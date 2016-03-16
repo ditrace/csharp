@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -12,7 +13,7 @@ namespace Kontur.Tracing.Core.Impl
             annotationNames = new Dictionary<Annotation, string>();
             timepointNames = new Dictionary<Timepoint, string>();
 
-            foreach (var field in typeof (Annotation).GetFields())
+            foreach (var field in typeof(Annotation).GetFields())
             {
                 var attribute = field.GetCustomAttributes(typeof (StringValueAttribute), false).FirstOrDefault() as StringValueAttribute;
                 if (attribute == null)

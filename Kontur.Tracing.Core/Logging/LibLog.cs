@@ -37,6 +37,7 @@
 // LibLog providers internally to provide built in support for popular logging frameworks.
 
 #pragma warning disable 1591
+#define LIBLOG_PUBLIC
 
 #if LIBLOG_PROVIDERS_ONLY
 namespace Kontur.Tracing.Core.LibLog
@@ -485,24 +486,6 @@ namespace Kontur.Tracing.Core.Logging
         {
             return GetLogger(typeof(T));
         }
-
-#if !LIBLOG_PORTABLE
-        /// <summary>
-        /// Gets a logger for the current class.
-        /// </summary>
-        /// <returns>An instance of <see cref="ILog"/></returns>
-        [MethodImpl(MethodImplOptions.NoInlining)]
-#if LIBLOG_PUBLIC
-        public
-#else
-        internal
-#endif
- static ILog GetCurrentClassLogger()
-        {
-            var stackFrame = new StackFrame(1, false);
-            return GetLogger(stackFrame.GetMethod().DeclaringType);
-        }
-#endif
 
         /// <summary>
         /// Gets a logger for the specified type.
@@ -1159,21 +1142,7 @@ namespace Kontur.Tracing.Core.Logging.LogProviders
                 {
                     lock (CallerStackBoundaryTypeSync)
                     {
-#if !LIBLOG_PORTABLE
-                        StackTrace stack = new StackTrace();
-                        Type thisType = GetType();
-                        s_callerStackBoundaryType = Type.GetType("LoggerExecutionWrapper");
-                        for (var i = 1; i < stack.FrameCount; i++)
-                        {
-                            if (!IsInTypeHierarchy(thisType, stack.GetFrame(i).GetMethod().DeclaringType))
-                            {
-                                s_callerStackBoundaryType = stack.GetFrame(i - 1).GetMethod().DeclaringType;
-                                break;
-                            }
-                        }
-#else
                         s_callerStackBoundaryType = typeof (LoggerExecutionWrapper);
-#endif
                     }
                 }
 
@@ -1940,11 +1909,7 @@ namespace Kontur.Tracing.Core.Logging.LogProviders
 
         internal static Type GetBaseTypePortable(this Type type)
         {
-#if LIBLOG_PORTABLE
             return type.GetTypeInfo().BaseType;
-#else
-            return type.BaseType;
-#endif
         }
 
 #if LIBLOG_PORTABLE
@@ -1959,20 +1924,9 @@ namespace Kontur.Tracing.Core.Logging.LogProviders
         }
 #endif
 
-#if !LIBLOG_PORTABLE
-        internal static object CreateDelegate(this MethodInfo methodInfo, Type delegateType)
-        {
-            return Delegate.CreateDelegate(delegateType, methodInfo);
-        }
-#endif
-
         internal static Assembly GetAssemblyPortable(this Type type)
         {
-#if LIBLOG_PORTABLE
             return type.GetTypeInfo().Assembly;
-#else
-            return type.Assembly;
-#endif
         }
     }
 

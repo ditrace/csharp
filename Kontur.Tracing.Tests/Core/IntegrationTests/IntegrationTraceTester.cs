@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Reflection;
 using Kontur.Tracing.Core.Config;
 using Kontur.Tracing.Core.Impl;
 using Nest;
@@ -67,7 +68,8 @@ namespace Kontur.Tracing.Core.IntegrationTests
 
         private bool TryGetInfos(DateTime startTime, out List<TraceContextInfo> infos)
         {
-            var settings = new ConnectionSettings(new Uri(string.Format("http://{0}:9200/", testElasticHost)), string.Format("traces-{0}", DateTime.UtcNow.ToString("yyyy.MM.dd")));
+            var indexName = string.Format("traces-{0}", DateTime.UtcNow.ToString("yyyy.MM.dd"));
+            var settings = new ConnectionSettings(new Uri(string.Format("http://{0}:9200/", testElasticHost)));
             var client = new ElasticClient(settings);
 
             infos = new List<TraceContextInfo>();
@@ -75,7 +77,8 @@ namespace Kontur.Tracing.Core.IntegrationTests
             {
                 var results = client.Search<JToken>(body =>
                     body.AllTypes().Take(100).Query(d =>
-                        d.Bool(b => b.Must(y => y.Range(z => z.OnField("timestamp").GreaterOrEquals(startTime)), x => x.Term("system", aggregationServiceSystem)))));
+                        d.Bool(b => b.Must(y => y.DateRange(z => z.Field("timestamp").GreaterThanOrEquals(startTime)),
+                                           x => x.Term("system", aggregationServiceSystem)))));
 
                 foreach (var document in results.Documents)
                 {

@@ -5,42 +5,42 @@ namespace Kontur.Tracing.Core.Config
     public interface ITracingConfig
     {
         /// <summary>
-        /// –убильник дл€ включени€/выключени€ трассировки
+        /// Trigger for enabling/disabling tracing
         /// </summary>
         bool IsEnabled { get; }
 
         /// <summary>
-        /// ѕродуктовый идентификатор дл€ запросов к сервису-агрегатору трассировок
+        /// Project identifier
         /// </summary>
         string AggregationServiceSystem { get; }
 
         /// <summary>
-        /// јдрес дл€ запросов к сервису-агрегатору трассировок
+        /// DiTrace gate address
         /// </summary>
         string AggregationServiceUrl { get; }
 
         /// <summary>
-        /// ћаксимальное кол-во span'ов, которое может быть сохранено в пам€ти дл€ отправки
+        /// Maximum count of spans that can be saved in memory before sending
         /// </summary>
         int MaxBufferedSpans { get; }
 
         /// <summary>
-        /// ѕериод, с которым накопленные span'ы отправл€ютс€ на сервис-агрегатор трассировок
+        /// Spans buffer flushing period
         /// </summary>
         TimeSpan BufferFlushPeriod { get; }
 
         /// <summary>
-        /// “аймаут на запрос по отправке накопленных span'ов на сервис-агрегатор трассировок
+        /// Flush requests timeout
         /// </summary>
         TimeSpan BufferFlushTimeout { get; }
 
         /// <summary>
-        /// ¬еро€тность от 0 до 1, с которой кажда€ нова€ трассировка получает шанс быть сохраненной
+        /// Probability between 0 and 1 of a chance that trace will be sended to DiTrace gate
         /// </summary>
         double SamplingChance { get; }
 
         /// <summary>
-        /// ћаксимальное количество семплируемых трассировок в секунду
+        /// Maximum traces per second
         /// </summary>
         int MaxSamplesPerSecond { get; }
     }

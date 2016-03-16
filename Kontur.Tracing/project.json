@@ -5,10 +5,19 @@
     ],
     "description": "DiTrace csharp client library",
     "dependencies": {
-        "Kontur.Tracing.Core": "",
-        "log4net": "2.0.5"
+        "Kontur.Tracing.Core": ""
     },
     "frameworks": {
-        "dnx451": {}
+        "dnxcore50":{
+            "dependencies": {
+                "System.Runtime": "4.0.21-beta-23516",
+                "System.Linq": "4.0.1-beta-23516",
+                "System.Threading": "4.0.11-beta-23516",
+                "System.Collections": "4.0.11-beta-23516",
+                "System.Collections.Specialized": "4.0.1-beta-23516",
+                "System.Reflection": "4.1.0-beta-23516",
+                "System.Net.Http": "4.0.1-beta-23516"
+            }
+        }
     }
 }

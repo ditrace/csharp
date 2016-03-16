@@ -49,12 +49,12 @@ namespace Kontur.Tracing.Core
             if (expectedValue == null) return realValue == null;
             if (expectedValue == "*") return true;
             if (expectedValue == "?") return !string.IsNullOrEmpty(realValue);
-            if (!expectedValue.StartsWith("$")) return realValue.Equals(expectedValue, StringComparison.InvariantCultureIgnoreCase);
+            if (!expectedValue.StartsWith("$")) return realValue.Equals(expectedValue, StringComparison.Ordinal);
 
             var variableName = expectedValue.Substring(1);
             string expectedVariableValue;
             if (variables.TryGetValue(variableName, out expectedVariableValue))
-                return string.Equals(realValue, expectedVariableValue, StringComparison.InvariantCultureIgnoreCase);
+                return string.Equals(realValue, expectedVariableValue, StringComparison.Ordinal);
 
             variables.Add(variableName, realValue);
             return true;

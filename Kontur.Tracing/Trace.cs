@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 using Kontur.Tracing.Core.Config;
-using ILog = log4net.ILog;
+using Kontur.Tracing.Core.Logging;
 
 namespace Kontur.Tracing
 {

@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Kontur.Tracing.Core.Config;
 using Kontur.Tracing.Core.Impl;
-using NSubstitute;
 using NUnit.Framework;
 
 namespace Kontur.Tracing
@@ -19,8 +18,9 @@ namespace Kontur.Tracing
                 MaxSamplesPerSecond = int.MaxValue,
             };
 
-            timeProvider = Substitute.For<ITimeProvider>();
-            timeProvider.GetCurrentTime().Returns(DateTime.UtcNow);
+            timeProvider = new TestTimeProvider{
+                Value = DateTime.UtcNow
+            };
 
             sampler = new Core.Impl.TraceSampler(new StaticConfigurationProvider(config), timeProvider);
         }
@@ -68,11 +68,22 @@ namespace Kontur.Tracing
 
         private void ShiftCurrentTime(TimeSpan delta)
         {
-            timeProvider.GetCurrentTime().Returns(timeProvider.GetCurrentTime() + delta);
+            timeProvider.Value = timeProvider.GetCurrentTime() + delta;
         }
 
         private Core.Config.TracingConfig config;
-        private ITimeProvider timeProvider;
+        private TestTimeProvider timeProvider;
         private Core.Impl.TraceSampler sampler;
+    }
+
+    class TestTimeProvider : ITimeProvider
+    {
+        public DateTime Value {get; set;}
+        
+        
+        public DateTime GetCurrentTime()
+        {
+            return Value;
+        }
     }
 }

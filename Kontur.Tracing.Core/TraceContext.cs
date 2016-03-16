@@ -1,5 +1,4 @@
-﻿using System.Runtime.Remoting.Messaging;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using Kontur.Tracing.Core.Impl;
 
 namespace Kontur.Tracing.Core
@@ -11,7 +10,7 @@ namespace Kontur.Tracing.Core
         {
             get
             {
-                var currentAnnotator = (ITraceContextAnnotator)CallContext.LogicalGetData(Trace.AnnotatorStorageKey);
+                var currentAnnotator = Trace.tracingAnnotatorContext.Value;
                 return currentAnnotator ?? NoOpTraceContext.Instance;
             }
         }

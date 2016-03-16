@@ -1,5 +1,5 @@
 using System;
-using System.Runtime.Remoting.Messaging;
+using System.Threading;
 using JetBrains.Annotations;
 using Kontur.Tracing.Core.Config;
 using Kontur.Tracing.Core.Impl;
@@ -8,6 +8,9 @@ namespace Kontur.Tracing.Core
 {
     public static class Trace
     {
+        private static AsyncLocal<RealTraceContext> tracingContext = new AsyncLocal<RealTraceContext>();
+        internal static AsyncLocal<ITraceContextAnnotator> tracingAnnotatorContext = new AsyncLocal<ITraceContextAnnotator>();
+        
         [NotNull]
         public static ITraceContext CreateRootContext([NotNull] string contextName, string traceId = null, bool? activate = null)
         {
@@ -114,23 +117,13 @@ namespace Kontur.Tracing.Core
         [CanBeNull]
         private static RealTraceContext TryGetRealTraceContext()
         {
-            return (RealTraceContext)CallContext.LogicalGetData(realTraceContextStorageKey);
+            return tracingContext.Value;
         }
 
         private static void SetRealTraceContext([CanBeNull] RealTraceContext newCurrentContext)
         {
-            if (newCurrentContext == null)
-            {
-                CallContext.FreeNamedDataSlot(AnnotatorStorageKey);
-                CallContext.FreeNamedDataSlot(realTraceContextStorageKey);
-                CallContext.FreeNamedDataSlot(dTraceIdPublicStorageKey);
-            }
-            else
-            {
-                CallContext.LogicalSetData(AnnotatorStorageKey, newCurrentContext);
-                CallContext.LogicalSetData(realTraceContextStorageKey, newCurrentContext);
-                CallContext.LogicalSetData(dTraceIdPublicStorageKey, newCurrentContext.TraceId);
-            }
+            tracingContext.Value = newCurrentContext;
+            tracingAnnotatorContext.Value = newCurrentContext;
         }
 
         public static bool IsInitialized
@@ -190,11 +183,6 @@ namespace Kontur.Tracing.Core
                 isInitialized = false;
             }
         }
-
-        public static readonly string AnnotatorStorageKey = Guid.NewGuid().ToString();
-        private static readonly string realTraceContextStorageKey = Guid.NewGuid().ToString();
-        // dTraceIdPublicStorageKey is shared with log4stash library
-        private const string dTraceIdPublicStorageKey = "DTraceId-PublicStorageKey-33115BA6-3CC9-4BC5-A540-D2EA133B0B7F";
 
         private static IConfigurationProvider configProvider;
         private static ITracingEnvironment tracingEnvironment;

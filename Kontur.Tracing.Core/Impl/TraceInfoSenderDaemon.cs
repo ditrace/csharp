@@ -34,7 +34,7 @@ namespace Kontur.Tracing.Core.Impl
             lock (locker)
             {
                 stopSignal.Set();
-                senderThread.Join(tracingConfig.BufferFlushTimeout + tracingConfig.BufferFlushPeriod);
+                senderThread.Join((int)(tracingConfig.BufferFlushTimeout + tracingConfig.BufferFlushPeriod).TotalMilliseconds);
             }
         }
 
@@ -76,6 +76,6 @@ namespace Kontur.Tracing.Core.Impl
         private readonly Thread senderThread;
         private readonly ManualResetEventSlim stopSignal = new ManualResetEventSlim();
 
-        private static readonly ILog log = LogProvider.GetCurrentClassLogger();
+        private static readonly ILog log = LogProvider.GetLogger(typeof(TraceInfoSenderDaemon));
     }
 }

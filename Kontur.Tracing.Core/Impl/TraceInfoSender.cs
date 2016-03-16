@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Security;
+using System.Net.Http;
 using System.Text;
 using JetBrains.Annotations;
 using Kontur.Tracing.Core.Config;
@@ -21,22 +21,24 @@ namespace Kontur.Tracing.Core.Impl
         {
             try
             {
-                var content = Encoding.UTF8.GetBytes(serializer.Serialize(infos));
-                var request = PrepareWebRequest(content);
-                using (var requestStream = request.GetRequestStream())
+                using (var httpClient = new HttpClient(){
+                    
+                })
                 {
-                    requestStream.Write(content, 0, content.Length);
-                    using (var response = (HttpWebResponse) request.GetResponse())
+                    var config = configProvider.GetConfig();
+                    var url = string.Format("{0}?system={1}", config.AggregationServiceUrl, config.AggregationServiceSystem);
+                    using (var content = new ByteArrayContent(Encoding.UTF8.GetBytes(serializer.Serialize(infos))))
                     {
+                        var response = httpClient.PostAsync(url, content).Result;
                         switch (response.StatusCode)
                         {
                             case HttpStatusCode.OK:
                                 return TraceSpanSendResult.Success;
                             case HttpStatusCode.BadRequest:
-                                LogFailure(request.RequestUri.Authority, response.StatusCode);
+                                LogFailure(url, response.StatusCode);
                                 return TraceSpanSendResult.IncorrectRequest;
                             default:
-                                LogFailure(request.RequestUri.Authority, response.StatusCode);
+                                LogFailure(url, response.StatusCode);
                                 return TraceSpanSendResult.Failure;
                         }
                     }
@@ -47,37 +49,6 @@ namespace Kontur.Tracing.Core.Impl
                 LogFailure(e);
                 return TraceSpanSendResult.Failure;
             }
-        }
-
-        private HttpWebRequest PrepareWebRequest(byte[] content)
-        {
-            var config = configProvider.GetConfig();
-            var webRequestUrl = string.Format("{0}?system={1}", config.AggregationServiceUrl, config.AggregationServiceSystem);
-            var webRequest = WebRequest.CreateHttp(webRequestUrl);
-
-            webRequest.Method = "POST";
-            webRequest.ContentLength = content.Length;
-            webRequest.ContentType = "application/x-ldjson";
-
-            webRequest.Expect = null;
-            webRequest.Proxy = null;
-            webRequest.KeepAlive = true;
-            webRequest.Pipelined = true;
-
-            webRequest.AllowWriteStreamBuffering = false;
-            webRequest.AllowReadStreamBuffering = false;
-            webRequest.AuthenticationLevel = AuthenticationLevel.None;
-            webRequest.AutomaticDecompression = DecompressionMethods.None;
-
-            webRequest.ServicePoint.Expect100Continue = false;
-            webRequest.ServicePoint.ConnectionLimit = 100;
-            webRequest.ServicePoint.UseNagleAlgorithm = false;
-
-            var timeoutMilliseconds = Math.Max(1, (int) config.BufferFlushTimeout.TotalMilliseconds);
-            webRequest.Timeout = timeoutMilliseconds;
-            webRequest.ReadWriteTimeout = timeoutMilliseconds;
-
-            return webRequest;
         }
 
         private static void LogFailure(Exception e)
@@ -93,6 +64,6 @@ namespace Kontur.Tracing.Core.Impl
         private readonly IConfigurationProvider configProvider;
         private readonly TraceInfoSerializer serializer;
 
-        private static readonly ILog log = LogProvider.GetCurrentClassLogger();
+        private static readonly ILog log = LogProvider.GetLogger(typeof(TraceInfoSender));
     }
 }
