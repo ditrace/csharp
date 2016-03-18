@@ -7,9 +7,9 @@ namespace Kontur.Tracing.Core
     {
         public static void SetTracingHeaders(this WebRequest request, ITraceContext context)
         {
-            request.Headers.Add(Tracing.TraceHttpHeaders.XKonturTraceId, context.TraceId);
-            request.Headers.Add(Tracing.TraceHttpHeaders.XKonturTraceSpanId, context.ContextId);
-            request.Headers.Add(Tracing.TraceHttpHeaders.XKonturTraceIsSampled, context.IsActive.ToString());
+            request.Headers[Tracing.TraceHttpHeaders.XKonturTraceId] = context.TraceId;
+            request.Headers[Tracing.TraceHttpHeaders.XKonturTraceSpanId] = context.ContextId;
+            request.Headers[Tracing.TraceHttpHeaders.XKonturTraceIsSampled] = context.IsActive.ToString();
         }
 
         public static void ExtractFromHttpHeaders(NameValueCollection headers, out string traceId, out string traceSpanId, out bool? traceSampled)

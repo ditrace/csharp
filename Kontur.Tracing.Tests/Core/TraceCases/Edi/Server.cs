@@ -1,14 +1,13 @@
 using System;
 using System.Text;
 using System.IO;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace Kontur.Tracing.Core.TraceCases.Edi
 {
     internal class Server : IDisposable
     {
-        public Server(string url, RemoteTaskQueue taskQueue, Synchronizer synchronizer)
+        public Server(RemoteTaskQueue taskQueue, Synchronizer synchronizer)
         {
             this.taskQueue = taskQueue;
             this.synchronizer = synchronizer;

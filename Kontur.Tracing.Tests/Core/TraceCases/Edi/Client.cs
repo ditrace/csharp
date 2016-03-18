@@ -6,9 +6,8 @@ namespace Kontur.Tracing.Core.TraceCases.Edi
 {
     internal class Client
     {
-        public Client(string url, Synchronizer synchronizer)
+        public Client(Synchronizer synchronizer)
         {
-            this.url = url;
             this.synchronizer = synchronizer;
         }
 
@@ -27,13 +26,7 @@ namespace Kontur.Tracing.Core.TraceCases.Edi
                     var request = (HttpWebRequest)WebRequest.Create(url);
                     request.Method = "POST";
                     request.ContentType = "application/x-www-form-urlencoded";
-                    request.ContentLength = bytes.Length;
-                    request.Timeout = (int)TimeSpan.FromSeconds(2).TotalMilliseconds;
                     request.SetTracingHeaders(clientContext);
-                    var stream = request.GetRequestStream();
-                    stream.Write(bytes, 0, bytes.Length);
-                    stream.Close();
-                    var response = request.GetResponse();
 
                     clientContext.RecordTimepoint(Timepoint.ClientReceive);
                     synchronizer.ServerEndProcessQuerySignal.Wait();
