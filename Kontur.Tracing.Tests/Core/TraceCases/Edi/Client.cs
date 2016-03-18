@@ -1,13 +1,17 @@
 using System;
 using System.Net;
-using System.Text;
 
 namespace Kontur.Tracing.Core.TraceCases.Edi
 {
     internal class Client
     {
-        public Client(Synchronizer synchronizer)
+        private readonly string url = "/url";
+        private Server server;
+        private readonly Synchronizer synchronizer;
+
+        public Client(Synchronizer synchronizer, Server server)
         {
+            this.server = server;
             this.synchronizer = synchronizer;
         }
 
@@ -21,28 +25,18 @@ namespace Kontur.Tracing.Core.TraceCases.Edi
                     clientContext.RecordAnnotation(Annotation.RequestUrl, url);
                     clientContext.RecordTimepoint(Timepoint.ClientSend);
 
-                    var bytes = Encoding.ASCII.GetBytes(message);
-
-                    var request = (HttpWebRequest)WebRequest.Create(url);
-                    request.Method = "POST";
-                    request.ContentType = "application/x-www-form-urlencoded";
-                    request.SetTracingHeaders(clientContext);
+                    var request = new ClientRequest((HttpWebRequest)WebRequest.Create(url), message);
+                    request.Raw.SetTracingHeaders(clientContext);
+                    
+                    server.HandleContext(request);
 
                     clientContext.RecordTimepoint(Timepoint.ClientReceive);
-                    synchronizer.ServerEndProcessQuerySignal.Wait();
                 }
             }
             catch (Exception e)
             {
                 Console.Out.WriteLine("Unhandled client exception: {0}", e);
             }
-            finally
-            {
-                synchronizer.ClientEndQuerySignal.Set();
-            }
         }
-
-        private readonly string url;
-        private readonly Synchronizer synchronizer;
     }
 }

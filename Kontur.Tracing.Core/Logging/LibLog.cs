@@ -52,12 +52,6 @@ namespace Kontur.Tracing.Core.Logging
     using Kontur.Tracing.Core.Logging.LogProviders;
 #endif
     using System;
-#if !LIBLOG_PROVIDERS_ONLY
-    using System.Diagnostics;
-#if !LIBLOG_PORTABLE
-    using System.Runtime.CompilerServices;
-#endif
-#endif
 
 #if LIBLOG_PROVIDERS_ONLY
     internal
@@ -702,16 +696,10 @@ namespace Kontur.Tracing.Core.Logging.LogProviders
 {
     using System;
     using System.Collections.Generic;
-#if !LIBLOG_PORTABLE
-    using System.Diagnostics;
-#endif
     using System.Globalization;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
-#if !LIBLOG_PORTABLE
-    using System.Text;
-#endif
     using System.Text.RegularExpressions;
 
     internal abstract class LogProviderBase : ILogProvider

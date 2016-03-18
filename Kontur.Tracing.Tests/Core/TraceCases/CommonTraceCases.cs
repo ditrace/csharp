@@ -1,5 +1,5 @@
 ﻿using System.Net;
-using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kontur.Tracing.Core.TraceCases
@@ -89,21 +89,17 @@ namespace Kontur.Tracing.Core.TraceCases
         public static void ClientServerCase()
         {
             const string url = "http://localhost:12346/";
-            var listener = new HttpListener();
-            listener.Prefixes.Add(url);
-            listener.Start();
-
+            var requestSent = new ManualResetEvent(false);
+            ClientRequest clientRequest = new ClientRequest((HttpWebRequest)WebRequest.Create(url), "");
             var serverTask = Task.Factory.StartNew(() =>
             {
-                var context = listener.GetContext();
-                var request = context.Request;
+                requestSent.WaitOne();
                 string traceId, contextId;
                 bool? isActive;
-                RequestExtensions.ExtractFromHttpHeaders(request.Headers, out traceId, out contextId, out isActive);
+                RequestExtensions.ExtractFromHttpHeaders(clientRequest.Raw.Headers, out traceId, out contextId, out isActive);
                 using (var serverContext = Trace.ContinueContext(traceId, contextId, isActive ?? false, isRoot: false))
                 {
                     serverContext.RecordTimepoint(Timepoint.ServerReceive);
-                    context.Response.Close();
                     serverContext.RecordTimepoint(Timepoint.ServerSend);
                 }
             });
@@ -112,14 +108,11 @@ namespace Kontur.Tracing.Core.TraceCases
             {
                 clientContext.RecordTimepoint(Timepoint.ClientSend);
                 clientContext.RecordAnnotation(Annotation.RequestUrl, url);
-                var clientRequest = (HttpWebRequest)WebRequest.Create(url);
-                clientRequest.SetTracingHeaders(clientContext);
-                clientRequest.GetResponse();
+                clientRequest.Raw.SetTracingHeaders(clientContext);
+                requestSent.Set();
                 serverTask.Wait();
                 clientContext.RecordTimepoint(Timepoint.ClientReceive);
             }
-
-            listener.Close();
         }
     }
 }

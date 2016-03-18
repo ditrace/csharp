@@ -1,4 +1,3 @@
-using System.Collections.Specialized;
 using System.Net;
 
 namespace Kontur.Tracing.Core
@@ -11,8 +10,7 @@ namespace Kontur.Tracing.Core
             request.Headers[Tracing.TraceHttpHeaders.XKonturTraceSpanId] = context.ContextId;
             request.Headers[Tracing.TraceHttpHeaders.XKonturTraceIsSampled] = context.IsActive.ToString();
         }
-
-        public static void ExtractFromHttpHeaders(NameValueCollection headers, out string traceId, out string traceSpanId, out bool? traceSampled)
+        public static void ExtractFromHttpHeaders(WebHeaderCollection headers, out string traceId, out string traceSpanId, out bool? traceSampled)
         {
             traceSpanId = null;
             traceSampled = null;

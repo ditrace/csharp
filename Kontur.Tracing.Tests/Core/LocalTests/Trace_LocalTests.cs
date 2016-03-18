@@ -3,7 +3,6 @@ using Kontur.Tracing.Core.FunctionalTests;
 using Kontur.Tracing.Core.TraceCases;
 using Kontur.Tracing.Core.TraceCases.Edi;
 using NUnit.Framework;
-using NUnitLite;
 
 namespace Kontur.Tracing.Core.LocalTests
 {

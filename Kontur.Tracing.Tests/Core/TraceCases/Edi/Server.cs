@@ -1,47 +1,27 @@
 using System;
-using System.Text;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace Kontur.Tracing.Core.TraceCases.Edi
 {
-    internal class Server : IDisposable
+    internal class Server
     {
         public Server(RemoteTaskQueue taskQueue, Synchronizer synchronizer)
         {
             this.taskQueue = taskQueue;
             this.synchronizer = synchronizer;
-            listener.Prefixes.Add(url);
-            listener.Start();
-            processTask = Task.Factory.StartNew(() => { HandleContext(listener.GetContext()); });
         }
 
-        public void Dispose()
-        {
-            processTask.Wait();
-            listener.Close();
-        }
-
-        private void HandleContext(HttpListenerContext context)
+        public void HandleContext(ClientRequest request)
         {
             try
             {
                 string traceId, contextId;
                 bool? isActive;
-                RequestExtensions.ExtractFromHttpHeaders(context.Request.Headers, out traceId, out contextId, out isActive);
+                RequestExtensions.ExtractFromHttpHeaders(request.Raw.Headers, out traceId, out contextId, out isActive);
                 using (var serverContext = Trace.ContinueContext(traceId, contextId, isActive ?? false, isRoot: false))
                 {
                     serverContext.RecordTimepoint(Timepoint.ServerReceive);
-                    serverContext.RecordAnnotation(Annotation.RequestUrl, context.Request.Url.ToString());
-
-                    using(var streamReader = new StreamReader(context.Request.InputStream, Encoding.UTF8))
-                    {
-                        var message = streamReader.ReadToEnd();
-                        taskQueue.PushTask(new RemoteTask(message));
-                        context.Response.StatusCode = 202;
-                        context.Response.Close();
-                    }
-
+                    serverContext.RecordAnnotation(Annotation.RequestUrl, request.Raw.RequestUri.ToString());
+                    taskQueue.PushTask(new RemoteTask(request.Message));
                     serverContext.RecordTimepoint(Timepoint.ServerSend);
                 }
             }
@@ -57,7 +37,5 @@ namespace Kontur.Tracing.Core.TraceCases.Edi
 
         private readonly RemoteTaskQueue taskQueue;
         private readonly Synchronizer synchronizer;
-        private readonly Task processTask;
-        private readonly HttpListener listener = new HttpListener();
     }
 }
